@@ -147,12 +147,12 @@ public:
 	}
 
 private:
-	vector< boost::thread > m_thread_pool;			/// main pool of threads
-	queue< boost::function< void() > > m_tasks;		/// queue with tasks
-	atomic_bool m_done;								/// for closing
+	std::vector< boost::thread > m_thread_pool;			/// main pool of threads
+	std::queue< boost::function< void() > > m_tasks;		/// queue with tasks
+	std::atomic_bool m_done;								/// for closing
 	boost::mutex m_mutex;							/// for add and remove task from queue
-	atomic_int m_available;							/// available threads in pool
-	atomic_bool m_running;							/// check running any threads ater create object and break if false
+	std::atomic_int m_available;							/// available threads in pool
+	std::atomic_bool m_running;							/// check running any threads ater create object and break if false
 	boost::condition_variable m_condition;			/// condition for send notification
 };
 
