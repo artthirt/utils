@@ -4,10 +4,12 @@
 #include <iostream>
 #include <vector>
 #include <time.h>
+#ifndef _MSC_VER
 #include <unistd.h>
+#endif
 
 typedef std::vector< char > bytearray;
-typedef std::vector< u_char > ubytearray;
+typedef std::vector< uint8_t > ubytearray;
 
 typedef std::vector< bytearray > vectorstream;
 

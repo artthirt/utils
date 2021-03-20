@@ -1,20 +1,17 @@
 #include "common.h"
 
 #include <fstream>
+#include <thread>
+#include <chrono>
 
 void _msleep(long ms)
 {
-	timespec tm;
-	tm.tv_nsec = (ms * 1000000) % 1000000000;
-	tm.tv_sec = ms / 1000;
-	clock_nanosleep(CLOCK_MONOTONIC, 0, &tm, 0);
+    std::this_thread::sleep_for(std::chrono::milliseconds(ms));
 }
 
 int64_t get_curtime_usec()
 {
-	timespec tm;
-	clock_gettime(CLOCK_MONOTONIC, &tm);
-	return (tm.tv_nsec + (tm.tv_sec * 1e+9))/1000;
+    return std::chrono::high_resolution_clock::now().time_since_epoch().count();
 }
 
 int64_t get_curtime_msec()

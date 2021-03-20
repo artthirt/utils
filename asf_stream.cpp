@@ -4,9 +4,9 @@
 ///////////////////////////////
 
 union typefield{
-	u_char byte;
-	u_short word;
-	u_int dword;
+    uint8_t byte;
+    uint16_t word;
+    uint32_t dword;
 };
 
 enum DATATYPE{
@@ -32,12 +32,12 @@ struct asf_protocol{
 		m_serial = 0;
 	}
 
-	void set_serial(u_char value){
+    void set_serial(uint8_t value){
 		m_serial = value & 0x7F;
 	}
 
-	u_char length_flag() const{
-		u_char res = 0;
+    uint8_t length_flag() const{
+        uint8_t res = 0;
 		res = m_mul_payl_pres;
 		res |= (m_sequencetype << 1);
 		res |= (m_paddlentype << 3);
@@ -46,7 +46,7 @@ struct asf_protocol{
 		return res;
 	}
 
-	void set_length_flag(u_char value){
+    void set_length_flag(uint8_t value){
 		m_mul_payl_pres		= static_cast< DATATYPE >(value & 1);
 		m_sequencetype		= static_cast< DATATYPE >((value >> 1) & 0x3);
 		m_paddlentype		= static_cast< DATATYPE >((value >> 3) & 0x3);
@@ -54,8 +54,8 @@ struct asf_protocol{
 		m_errcorr			= static_cast< DATATYPE >((value >> 7) & 0x1);
 	}
 
-	u_char property_flag() const{
-		u_char res = 0;
+    uint8_t property_flag() const{
+        uint8_t res = 0;
 		res |= (m_repllentype);
 		res |= (m_offsettype << 2);
 		res |= (m_mediaobjnumlentype << 4);
@@ -63,7 +63,7 @@ struct asf_protocol{
 		return res;
 	}
 
-	void set_property_flag(u_char value){
+    void set_property_flag(uint8_t value){
 		m_repllentype			= static_cast< DATATYPE >(value & 0x3);
 		m_offsettype			= static_cast< DATATYPE >((value >> 2) & 0x3);
 		m_mediaobjnumlentype	= static_cast< DATATYPE >((value >> 4) & 0x3);
@@ -71,18 +71,18 @@ struct asf_protocol{
 	}
 
 	bool create_packet(datastream& stream_in, datastream& stream_out){
-		u_char uc_value;
-		u_int dword = 0;
-		u_short word = 0;
+        uint8_t uc_value;
+        uint32_t dword = 0;
+        uint16_t word = 0;
 		std::vector< char > buffer;
-		u_int len = 0;
+        uint32_t len = 0;
 
 		stream_out << length_flag();
 		stream_out << property_flag();
 		dword = stream_in.size();
 		stream_out << dword;
-		stream_out << static_cast< u_int >(0);
-		stream_out << static_cast< u_int >(0);
+        stream_out << static_cast< uint32_t >(0);
+        stream_out << static_cast< uint32_t >(0);
 		dword = get_curtime_msec();
 		stream_out << dword;
 		stream_out << word;
@@ -109,9 +109,9 @@ struct asf_protocol{
 
 	bool parse_bytearray(const bytearray& data){
 		datastream stream(data);
-		u_char uc_value, serial;
-		u_short us_value;
-		u_int ul_value, len, offset;
+        uint8_t uc_value, serial;
+        uint16_t us_value;
+        uint32_t ul_value, len, offset;
 
 		stream >> uc_value;
 		set_length_flag(uc_value);
@@ -163,9 +163,9 @@ private:
 	DATATYPE m_offsettype;
 	DATATYPE m_mediaobjnumlentype;
 	DATATYPE m_streamnumlentype;
-	u_char m_serial;
+    uint8_t m_serial;
 	size_t m_maxpacket_size;
-	u_int m_time;
+    uint32_t m_time;
 	bytearray m_buffer;
 };
 
