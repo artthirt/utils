@@ -111,13 +111,13 @@ struct asf_protocol{
 		datastream stream(data);
         uint8_t uc_value, serial;
         uint16_t us_value;
-        uint32_t ul_value, len, offset;
+        uint32_t ul_value, len = 0, size, offset;
 
 		stream >> uc_value;
 		set_length_flag(uc_value);
 		stream >> uc_value;
 		set_property_flag(uc_value);
-		stream >> len;
+        stream >> size;
 		stream >> ul_value;
 		stream >> ul_value;
 		stream >> m_time;
@@ -131,11 +131,16 @@ struct asf_protocol{
 		stream >> serial;
 		stream >> offset;
 
+        m_buffer.resize(size);
+
 		if(m_serial != serial){
-			m_buffer.resize(len);
 			m_serial = serial;
 		}
-		len = stream.size() - stream.pos();
+        if(m_buffer.empty() || offset + len > m_buffer.size()){
+            return false;
+        }
+        len = stream.size() - stream.pos();
+        //std::cout << (uint16_t)serial << " " << offset << " " << size << " " << offset + len << "\n";
 		stream.readRawData(&m_buffer[offset], len);
 
 		return (offset + len == m_buffer.size());
